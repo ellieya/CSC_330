@@ -57,7 +57,7 @@ public class JulianCalendar {
 		
 		for (int i = 1; i <= MAX_DAY; ++i) {
 			
-			System.out.printf("%n %4s", i); //This could be better
+			System.out.printf("%n %4s", i);
 			
 			CUMULATIVE_DAY = 1;
 			
