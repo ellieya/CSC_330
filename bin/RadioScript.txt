@@ -1,0 +1,21 @@
+## 
+## Script contains a sequence of directives for the RadioController - each non-comment line indicates
+##   the Radio method that should be invoked, or a pause in execution .... 
+##	
+##
+
+ON 
+BAND FM
+VOLUME 40 
+VOLUME 19
+PRESET 4 101.5 
+USE_PRESET 4
+PAUSE 6 
+OFF 
+PAUSE 2
+ON 
+BAND AM 
+STATION 660
+xxx 1 1 
+PAUSE 4 
+OFF  
