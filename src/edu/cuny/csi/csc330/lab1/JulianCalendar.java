@@ -57,7 +57,7 @@ public class JulianCalendar {
 		
 		for (int i = 1; i <= MAX_DAY; ++i) {
 			
-			System.out.printf("%n %4s", i); //This could be better
+			System.out.printf("%n %4d", i);
 			
 			CUMULATIVE_DAY = 1;
 			
@@ -67,7 +67,7 @@ public class JulianCalendar {
 				if ((i > 28 && MONTH_SIZES[j] == 28) || (i > 30 && MONTH_SIZES[j] == 30)) {
 					System.out.printf("%5s", '-');
 				} else {
-					System.out.printf("%5s", CUMULATIVE_DAY + i-1);
+					System.out.printf("%5d", CUMULATIVE_DAY + i-1);
 				}
 				
 				CUMULATIVE_DAY += MONTH_SIZES[j];
