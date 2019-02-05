@@ -72,7 +72,8 @@ public class JulianCalendar {
 				
 				CUMULATIVE_DAY += MONTH_SIZES[j];
 			}
-			System.out.printf("%5s", i);
+			
+			System.out.printf("%5d", i);
 		}
 
 		
