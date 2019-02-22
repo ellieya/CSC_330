@@ -54,26 +54,25 @@ public class JulianCalendar {
 		 */
 		
 		int CUMULATIVE_DAY;
+		int z = 2 < 1 ? 100:99;
 		
 		for (int i = 1; i <= MAX_DAY; ++i) {
 			
-			System.out.printf("%n %4d", i);
+			System.out.printf("%n  %03d ", i);
 			
 			CUMULATIVE_DAY = 1;
 			
-			for (int j = 0; j < MONTH_SIZES.length; j++) {
+			for (int j = 0; j < MONTH_SIZES.length; CUMULATIVE_DAY += MONTH_SIZES[j], j++) { //Line reduced by 1 by moving line up here to execute with j++ because what this really is is an execution at the end
 				
 				//If FEBRUARY or months with 30 days, avoid printing day #'s
 				if ((i > 28 && MONTH_SIZES[j] == 28) || (i > 30 && MONTH_SIZES[j] == 30)) {
-					System.out.printf("%5s", '-');
+					System.out.printf(" %3s ", '-');
 				} else {
-					System.out.printf("%5d", CUMULATIVE_DAY + i-1);
+					System.out.printf(" %03d ", CUMULATIVE_DAY + i-1);
 				}
-				
-				CUMULATIVE_DAY += MONTH_SIZES[j];
 			}
 			
-			System.out.printf("%5d", i);
+			System.out.printf(" %03d ", i);
 		}
 
 		

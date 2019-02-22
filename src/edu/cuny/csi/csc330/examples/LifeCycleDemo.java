@@ -80,7 +80,7 @@ public class LifeCycleDemo {
 	
 	// gets called when this instance gets GC-ed 
 	protected synchronized void finalize() {
-		
+		System.out.println("In finalize");
 		instanceCounter--;
 	}
 
@@ -115,7 +115,7 @@ public class LifeCycleDemo {
 		/* 
 		 * another reference now pointing at demo4 
 		 */
-		LifeCycleDemo demo4ref = demo4; 
+		LifeCycleDemo demo4ref = demo4; // ???????????????????????????????????
 		
 		demo4 = null; // null out one of 2 references to the 4th instance 
 		demo = null; // null out the only reference to 4th instance 
