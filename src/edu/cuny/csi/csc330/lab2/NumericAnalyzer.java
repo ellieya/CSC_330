@@ -16,10 +16,10 @@ public class NumericAnalyzer {
 	min,
 	max,
 	range,
-	sum = 0;
+	sum = 0,
+	median;
 	
 	double
-	median,
 	mean,
 	variance,
 	standardDeviation;
@@ -64,60 +64,71 @@ public class NumericAnalyzer {
 	 */
 	public void compute() {
 		
-		computeMin();
-		computeMax();
-		computeRange();
+		//size is initialized/computed in constructor
+		min = computeMin();
+		max = computeMax(size);
+		range = computeRange(min, max);
 		
-		computeSum();
-		computeMean();
-		computeMedian();
-		computeVariance();
-		computeStandardDeviation();
+		sum = computeSum();
+		mean = computeMean(sum, size);
+		median = computeMedian(size);
+		variance = computeVariance(mean);
+		standardDeviation = computeStandardDeviation(variance);
 	}
 
-	private void computeMin() {
+	private int computeMin() {
 		// Because the array is sorted, max is just first element
-		min = intArgs[0];
+		return intArgs[0];
 	}
 
-	private void computeMax() {
+	/**
+	 * computeMax() - PRE: SIZE must be calculated before MAX
+	 */
+	private int computeMax(int size) {
 		//Because the array is sorted, max is just last element
-		max = intArgs[size-1];
+		return intArgs[size-1];
 	}
 	
 	/**
 	 * computeRange() - PRE: MAX and MIN must be calculated before RANGE 
 	 */
-	private void computeRange() {
-		range = max - min;
+	private int computeRange(int min, int max) {
+		return max - min;
 	}
 
-	private void computeSum() {
+	private int computeSum() {
+		int sum = 0;
 		for (int i = 0; i < intArgs.length; i++) {
 			sum += intArgs[i];
 		}
+		
+		return sum;
 	}
 
 	/**
-	 * computeMean() - PRE: SUM must be calculated before MEAN 
+	 * computeMean() - PRE: SUM and SIZE must be calculated before MEAN 
 	 */
-	private void computeMean() {
+	private double computeMean(int sum, int size) {
 
-		mean = (double) sum / size; //Cast to double before calculation
+		return (double) sum / size; //Cast to double before calculation
 	}
 	
 	/**
 	 * computeMedian() - PRE: SIZE must be calculated before MEDIAN 
 	 */
-	private void computeMedian() {
-		median = size % 2 == 0 ? ((double)(intArgs[size/2 - 1] + intArgs[size/2])/2) : intArgs[size/2];
+	private int computeMedian(int size) {
+		int median;
+		//True median calculation, save for later; if true calculation median needs to be double
+		//median = size % 2 == 0 ? ((double)(intArgs[size/2 - 1] + intArgs[size/2])/2) : intArgs[size/2];
+		median = intArgs[size/2];
 		
+		return median;
 	}
 	
 	/**
 	 * computeVariance() - PRE: MEAN must be calculated before VARIANCE 
 	 */
-	private void computeVariance() {
+	private double computeVariance(double mean) {
 		
 		double varianceSum = 0;
 		
@@ -125,15 +136,15 @@ public class NumericAnalyzer {
 			varianceSum += Math.pow(intArgs[i] - mean, 2);
 		}
 		
-		variance = (double) varianceSum / size;
+		return (double) varianceSum / size;
 		
 	}
 	
 	/**
 	 * computeStandardDeviation() - PRE: VARIANCE must be calculated before STANDARDDEVIATION
 	 */
-	private void computeStandardDeviation() {
-		standardDeviation = Math.sqrt(variance);
+	private double computeStandardDeviation(double variance) {
+		return Math.sqrt(variance);
 	}
 	
 	/**
@@ -152,11 +163,11 @@ public class NumericAnalyzer {
 		System.out.printf("%-20s%10d %n", "Range:", range);
 		System.out.printf("%-20s%10d %n", "Sum:", sum);
 		
-		//Doubles are rounded before printing
-		System.out.printf("%-20s%10d %n", "Mean:", Math.round(mean));
-		System.out.printf("%-20s%10d %n", "Median:", Math.round(median));
-		System.out.printf("%-20s%10d %n", "Variance", Math.round(variance));
-		System.out.printf("%-20s%10d %n", "Standard Deviation:", Math.round(standardDeviation));
+		//Doubles
+		System.out.printf("%-20s%10.2f %n", "Mean:", mean);
+		System.out.printf("%-20s%10d %n", "Median:", median);
+		System.out.printf("%-20s%10.2f %n", "Variance", variance);
+		System.out.printf("%-20s%10.2f %n", "Standard Deviation:", standardDeviation);
 		
 	}
 	
