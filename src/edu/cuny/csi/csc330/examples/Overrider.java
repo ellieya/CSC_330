@@ -44,7 +44,7 @@ public class Overrider {
 	
 
 	@Override
-	public String toString() {
+	public String toString(int x) {
 		return "Overrider [serialNumber=" + serialNumber + ", title="
 				+ title + "]";
 	}
