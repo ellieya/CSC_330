@@ -277,6 +277,7 @@ public class Radio {
 			
 			// turn it on
 			radio.on(); 
+			radio.on();
 			System.out.println("Turned On\n" + radio + "\n");
 			
 			// select FM Band & a station 
