@@ -43,7 +43,6 @@ public class SweetMillionGame {
 		gamesList = new int[games][SELECTION_COUNT];
 		
 		
-		
 	}
 	
 	private void generateNos() {

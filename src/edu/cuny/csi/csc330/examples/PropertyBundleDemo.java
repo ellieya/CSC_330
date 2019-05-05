@@ -1,5 +1,5 @@
 /**
- * PropertyResourceBundle 
+- * PropertyResourceBundle 
  * This is a very simple example of using a property bundle to provide 
  *  prompts / messages used by a program.
  * Thus, we decouple human readable text from compiled source code ... a fundamental best-practice
