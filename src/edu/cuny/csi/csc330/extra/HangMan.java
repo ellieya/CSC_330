@@ -51,7 +51,7 @@ public class HangMan {
 		Scanner scanObj = new Scanner(System.in);
 		
 		while (!endGame) {
-			printHangman();
+			makeHangmanString(penalty);
 			printKnownLetters();
 			printLettersGuessed();
 			if (!getInputAndCheckLetterExist(scanObj)) {
@@ -97,57 +97,53 @@ public class HangMan {
 		return wordList.get(Randomizer.generateInt(0, wordList.size()-1));
 	}
 	
-	public void printHangman() {
-		if (penalty != 6) {
-			System.out.println("__________");
-			System.out.println(" |    |");
-		}
-		else {
-			System.err.println("__________");
-			System.err.println(" |    |");
-		}
+	static public String makeHangmanString(int penaltyValue) {
+		
+		StringBuilder holder = new StringBuilder();
+		
+			holder.append("__________");
+			holder.append(" |    |");
 
-		switch (penalty) {
+		switch (penaltyValue) {
 		case 1:
-			System.out.println(" |    o");
-			System.out.println(" |");
-			System.out.println(" |");
+			holder.append(" |    o");
+			holder.append(" |");
+			holder.append(" |");
 			break;
 		case 2:
-			System.out.println(" |    o");
-			System.out.println(" |   /");
-			System.out.println(" |");
+			holder.append(" |    o");
+			holder.append(" |   /");
+			holder.append(" |");
 			break;
 		case 3:
-			System.out.println(" |    o");
-			System.out.println(" |   /|");
-			System.out.println(" |");
+			holder.append(" |    o");
+			holder.append(" |   /|");
+			holder.append(" |");
 			break;
 		case 4:
-			System.out.println(" |    o");
-			System.out.println(" |   /|\\");
-			System.out.println(" |");
+			holder.append(" |    o");
+			holder.append(" |   /|\\");
+			holder.append(" |");
 			break;
 		case 5:
-			System.out.println(" |    o");
-			System.out.println(" |   /|\\");
-			System.out.println(" |   /");
+			holder.append(" |    o");
+			holder.append(" |   /|\\");
+			holder.append(" |   /");
 			break;
 		case 6:
-			System.err.println(" |    o");
-			System.err.println(" |   /|\\");
-			System.err.println(" |   / \\");
+			holder.append(" |    o");
+			holder.append(" |   /|\\");
+			holder.append(" |   / \\");
 			break;
 		default:
-			System.out.println(" |");
-			System.out.println(" |");
-			System.out.println(" |");
+			holder.append(" |");
+			holder.append(" |");
+			holder.append(" |");
 			break;
 		}
-		if (penalty != 6)
-			System.out.println("__________");
-		else
-			System.err.println("__________");
+			holder.append("__________");
+			
+			return holder.toString();
 	}
 
 	private void printKnownLetters() {
@@ -266,7 +262,7 @@ public class HangMan {
 		// Throw exception if penalty = 6
 		// TODO put this into the exception class instead
 		if (penalty == 6) {
-			printHangman();
+			makeHangmanString(penalty);
 			System.err.println("GAME OVER! The word was " + word);
 			printWrongLettersGuessed();
 			System.err.println("Guesses: " + guesses);
