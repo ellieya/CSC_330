@@ -42,8 +42,9 @@ public class HangMan {
 			penalty = 0;
 			guesses = 0;
 			guessesLeft = GAME_OVER_VALUE;
-			// word = pickWordFromWordList();
-			word = "TEST"; //for debugging purposes
+			// TODO make sure you comment out word = "TEST" before submission
+			word = pickWordFromWordList();
+			//word = "TEST"; //for debugging purposes
 			wordLen = word.length();
 
 			// Initialize references
