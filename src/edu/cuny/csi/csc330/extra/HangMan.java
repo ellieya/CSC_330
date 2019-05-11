@@ -165,19 +165,7 @@ public class HangMan {
 		System.out.println();
 		
 	}
-	
-	private void printWrongLettersGuessed() {
-		System.err.print("Wrong Guesses: ");
-		for (int i = 0; i < wrongLettersGuessed.size(); i++) {
-			System.err.print(wrongLettersGuessed.get(i));
-			
-			//If last character, then print nothing
-			if (i != wrongLettersGuessed.size() - 1)
-				System.err.print(", ");
-		}
-		System.err.println();
-		
-	}
+
 	
 	private void printLettersGuessed() {
 		System.out.print("Letters Guessed: ");
@@ -261,16 +249,12 @@ public class HangMan {
 		guesses++;
 	}
 	
-	private void gameEnd() {
+	private void gameEnd() throws HangManException{
 
 		// Throw exception if penalty = 6
 		// TODO put this into the exception class instead
 		if (penalty == 6) {
-			printHangman();
-			System.err.println("GAME OVER! The word was " + word);
-			printWrongLettersGuessed();
-			System.err.println("Guesses: " + guesses);
-			System.err.println();
+			throw new HangManException();
 		} else {
 			System.out.print("The word was ");
 			printKnownLetters();
