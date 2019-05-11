@@ -3,10 +3,6 @@ package edu.cuny.csi.csc330.extra;
 /* TODO
  * Turn the game lose output into exception.
  * 
- * Game lose:
- * 		Incorrect guesses information
- * 		Total guesses information
- * 
  * 
  * Etc:
  * 		Make shit look nicer
@@ -31,16 +27,21 @@ public class HangMan {
 	private int lettersFound;
 	private boolean[] letterKnown;
 	private Vector<Character> lettersGuessed;
+	private Vector<Character> wrongLettersGuessed;
 	
 	HangMan(String fileName) {
 		penalty = 0;
+		guesses = 0;
 		guessesLeft = 6;
 		populateListFromFile(fileName);
 		//word = pickWordFromWordList();
 		word = "TEST";
 		wordLen = word.length();
+		
+		//Initialize references
 		letterKnown = new boolean[wordLen];
 		lettersGuessed = new Vector<Character>();
+		wrongLettersGuessed = new Vector<Character>();
 		playGame();
 		
 	}
@@ -58,6 +59,7 @@ public class HangMan {
 				System.out.println("Letter not found!");
 			}
 			incrGuesses();
+			System.out.println("Guesses is currently at " + guesses);
 			
 			System.out.println();
 			
@@ -156,9 +158,24 @@ public class HangMan {
 				System.out.print('_');
 			}
 			
-			System.out.print(' ');
+			//If last character, then print nothing
+			if (i != word.length() - 1)
+				System.out.print(" ");
 		}
 		System.out.println();
+		
+	}
+	
+	private void printWrongLettersGuessed() {
+		System.err.print("Wrong Guesses: ");
+		for (int i = 0; i < wrongLettersGuessed.size(); i++) {
+			System.err.print(wrongLettersGuessed.get(i));
+			
+			//If last character, then print nothing
+			if (i != wrongLettersGuessed.size() - 1)
+				System.err.print(", ");
+		}
+		System.err.println();
 		
 	}
 	
@@ -166,6 +183,10 @@ public class HangMan {
 		System.out.print("Letters Guessed: ");
 		for (int i = 0; i < lettersGuessed.size(); i++) {
 			System.out.print(lettersGuessed.get(i));
+			
+			//If last character, then print nothing
+			if (i != lettersGuessed.size() - 1)
+				System.out.print(", ");
 		}
 		System.out.println();
 	}
@@ -206,7 +227,9 @@ public class HangMan {
 	}
 	
 	/**
+	 * PRE: Check for duplicate guesses in getInputAndCheckLetterExist. Required b/c this method populates wrongLettersGuessed vector
 	 * Helps getInputAndCheckLetterExist() check if letter is present in 'word'.
+	 * If letter is not present, letter is added to wrongLettersGuessed
 	 */
 	private boolean checkLetterExist(char userInput) {
 		boolean atLeastOneFound = false;
@@ -218,6 +241,10 @@ public class HangMan {
 				lettersFound++;
 			}
 		}
+		
+		//Add to wrongLettersGuessed if not found
+		if (!atLeastOneFound)
+			wrongLettersGuessed.add(userInput);
 
 		return atLeastOneFound;
 	}
@@ -241,6 +268,9 @@ public class HangMan {
 		if (penalty == 6) {
 			printHangman();
 			System.err.println("GAME OVER! The word was " + word);
+			printWrongLettersGuessed();
+			System.err.println("Guesses: " + guesses);
+			System.err.println();
 		} else {
 			System.out.print("The word was ");
 			printKnownLetters();
