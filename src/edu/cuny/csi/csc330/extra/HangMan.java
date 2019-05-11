@@ -7,10 +7,6 @@ package edu.cuny.csi.csc330.extra;
  * 		Incorrect guesses information
  * 		Total guesses information
  * 
- * Game win:
- * 		Win after how many guesses?
- * 		How many guesses left?
- * 
  * 
  * Etc:
  * 		Make shit look nicer
@@ -27,17 +23,18 @@ import edu.cuny.csi.csc330.lib.Randomizer;
 
 public class HangMan {
 	private int penalty;
-	List<String> wordList;
-	String word;
-	int wordLen;
-	int lettersFound;
-	boolean[] letterKnown;
-	
-	// TODO address this
-	Vector<Character> lettersGuessed;
+	private int guesses;
+	private int guessesLeft; // 6 - penalty
+	private List<String> wordList;
+	private String word;
+	private int wordLen;
+	private int lettersFound;
+	private boolean[] letterKnown;
+	private Vector<Character> lettersGuessed;
 	
 	HangMan(String fileName) {
 		penalty = 0;
+		guessesLeft = 6;
 		populateListFromFile(fileName);
 		//word = pickWordFromWordList();
 		word = "TEST";
@@ -56,11 +53,11 @@ public class HangMan {
 			printHangman();
 			printKnownLetters();
 			printLettersGuessed();
-			//Ask for input
 			if (!getInputAndCheckLetterExist(scanObj)) {
 				incrPenalty();
 				System.out.println("Letter not found!");
 			}
+			incrGuesses();
 			
 			System.out.println();
 			
@@ -70,20 +67,33 @@ public class HangMan {
 			
 		}
 		scanObj.close();
-
 		
-		//Throw exception if penalty = 6
-		// TODO put this into the exception class instead
-		if (penalty == 6) {
-			printHangman();
-			System.err.println("GAME OVER! The word was " + word);
-		} else {
-			System.out.print("The word was ");
-			printKnownLetters();
-			System.out.println("You won! Congratulations!");
+		gameEnd();
+	}
+	
+	private void populateListFromFile(String fileName) {
+		wordList = new LinkedList<String>();
+		File wordFile = new File(fileName + ".txt");
+		Scanner reader;
+		
+		try {
+			reader = new Scanner(wordFile);
+		//An exception here if file open fail
+		//"Did you place file in root folder?"
+		while (reader.hasNextLine()) {
+			wordList.add(reader.nextLine());
+		}	
+		
+		reader.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
+	private String pickWordFromWordList() {
+		return wordList.get(Randomizer.generateInt(0, wordList.size()-1));
+	}
 	
 	public void printHangman() {
 		if (penalty != 6) {
@@ -138,7 +148,20 @@ public class HangMan {
 			System.err.println("__________");
 	}
 
-
+	private void printKnownLetters() {
+		for (int i = 0; i < word.length(); i++) {
+			if (letterKnown[i]) {
+				System.out.print(word.charAt(i));
+			} else {
+				System.out.print('_');
+			}
+			
+			System.out.print(' ');
+		}
+		System.out.println();
+		
+	}
+	
 	private void printLettersGuessed() {
 		System.out.print("Letters Guessed: ");
 		for (int i = 0; i < lettersGuessed.size(); i++) {
@@ -147,6 +170,15 @@ public class HangMan {
 		System.out.println();
 	}
 
+	
+	/**
+	 * Grabs input and checks if input has already been guessed or not.
+	 * If it has already been guessed, will continue asking for input until it is a letter that has not already been guessed. 
+	 * 
+	 * @return
+	 * returns true if letter is found in 'word'
+	 * false otherwise
+	 */
 	private boolean getInputAndCheckLetterExist(Scanner scanObj) {
 		char userInput;
 		boolean alreadyGuessed;
@@ -173,6 +205,9 @@ public class HangMan {
 		return checkLetterExist(userInput);
 	}
 	
+	/**
+	 * Helps getInputAndCheckLetterExist() check if letter is present in 'word'.
+	 */
 	private boolean checkLetterExist(char userInput) {
 		boolean atLeastOneFound = false;
 
@@ -187,50 +222,32 @@ public class HangMan {
 		return atLeastOneFound;
 	}
 
-	private void printKnownLetters() {
-		for (int i = 0; i < word.length(); i++) {
-			if (letterKnown[i]) {
-				System.out.print(word.charAt(i));
-			} else {
-				System.out.print('_');
-			}
-			
-			System.out.print(' ');
-		}
-		System.out.println();
-		
-	}
-
-	private String pickWordFromWordList() {
-		return wordList.get(Randomizer.generateInt(0, wordList.size()-1));
-	}
-
-	private void populateListFromFile(String fileName) {
-		wordList = new LinkedList<String>();
-		File wordFile = new File(fileName + ".txt");
-		Scanner reader;
-		
-		try {
-			reader = new Scanner(wordFile);
-		//An exception here if file open fail
-		//"Did you place file in root folder?"
-		while (reader.hasNextLine()) {
-			wordList.add(reader.nextLine());
-		}	
-		
-		reader.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
+	/**
+	 * Increments penalty and updates gussesLeft
+	 */
 	public void incrPenalty() {
 		penalty++;
+		guessesLeft--;
 	}
 
-	public List<String> getWordList() {
-		return wordList;
+	private void incrGuesses() {
+		guesses++;
+	}
+	
+	private void gameEnd() {
+
+		// Throw exception if penalty = 6
+		// TODO put this into the exception class instead
+		if (penalty == 6) {
+			printHangman();
+			System.err.println("GAME OVER! The word was " + word);
+		} else {
+			System.out.print("The word was ");
+			printKnownLetters();
+			System.out.println("Guesses: " + guesses);
+			System.out.println("Guesses left: " + guessesLeft);
+			System.out.println("You won! Congratulations!");
+		}
 	}
 
 	public static void main(String args[]) {
