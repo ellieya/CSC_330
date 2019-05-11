@@ -1,13 +1,5 @@
 package edu.cuny.csi.csc330.extra;
 
-/* TODO
- * Turn the game lose output into exception.
- * 
- * 
- * Etc:
- * 		Make shit look nicer
- */
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
@@ -18,9 +10,12 @@ import java.util.Vector;
 import edu.cuny.csi.csc330.lib.Randomizer;
 
 public class HangMan {
+	
+	private final int GAME_OVER_VALUE = 6; //Made into const in case want to change for the future.
+	
 	private int penalty;
 	private int guesses;
-	private int guessesLeft; // 6 - penalty
+	private int guessesLeft; // GAME_OVER_VALUE - penalty
 	private List<String> wordList;
 	private String word;
 	private int wordLen;
@@ -29,67 +24,82 @@ public class HangMan {
 	private Vector<Character> lettersGuessed;
 	private Vector<Character> wrongLettersGuessed;
 	
-	HangMan(String fileName) {
-		penalty = 0;
-		guesses = 0;
-		guessesLeft = 6;
-		populateListFromFile(fileName);
-		//word = pickWordFromWordList();
-		word = "TEST";
-		wordLen = word.length();
-		
-		//Initialize references
-		letterKnown = new boolean[wordLen];
-		lettersGuessed = new Vector<Character>();
-		wrongLettersGuessed = new Vector<Character>();
-		playGame();
+	public int getPenalty() {
+		return penalty;
+	}
+	
+	public int getGuesses() {
+		return guesses;
+	}
+
+	public String getWord() {
+		return word;
+	}
+
+	public HangMan(String fileName) {
+		try {
+			populateListFromFile(fileName);
+			penalty = 0;
+			guesses = 0;
+			guessesLeft = GAME_OVER_VALUE;
+			// word = pickWordFromWordList();
+			word = "TEST"; //for debugging purposes
+			wordLen = word.length();
+
+			// Initialize references
+			letterKnown = new boolean[wordLen];
+			lettersGuessed = new Vector<Character>();
+			wrongLettersGuessed = new Vector<Character>();
+		} catch (FileNotFoundException e) {
+			System.err.println("FILE NOT FOUND! Did you place the file in the root folder?");
+		}
 		
 	}
 	
-	private void playGame() {
+	public void playGame() {
 		boolean endGame = false;
 		Scanner scanObj = new Scanner(System.in);
 		
 		while (!endGame) {
-			makeHangmanString(penalty);
-			printKnownLetters();
-			printLettersGuessed();
+			System.out.println(makeHangmanString(penalty));
+			System.out.println(makeKnownLettersString());
+			System.out.println(makeLettersGuessedString());
+			System.out.println("Guesses left: " + guessesLeft);
 			if (!getInputAndCheckLetterExist(scanObj)) {
 				incrPenalty();
 				System.out.println("Letter not found!");
 			}
 			incrGuesses();
-			System.out.println("Guesses is currently at " + guesses);
 			
 			System.out.println();
 			
 			//If penalty met or all letters have been found, end the game
-			if (penalty == 6 || lettersFound == wordLen)
+			if (penalty == GAME_OVER_VALUE || lettersFound == wordLen)
 				endGame = true;
 			
 		}
 		scanObj.close();
 		
-		gameEnd();
+		try {
+			gameEnd();
+		} catch (HangManException e) {
+			System.err.println(e);
+		}
 	}
 	
-	private void populateListFromFile(String fileName) {
+	private void populateListFromFile(String fileName) throws FileNotFoundException {
 		wordList = new LinkedList<String>();
 		File wordFile = new File(fileName + ".txt");
 		Scanner reader;
 		
 		try {
 			reader = new Scanner(wordFile);
-		//An exception here if file open fail
-		//"Did you place file in root folder?"
-		while (reader.hasNextLine()) {
-			wordList.add(reader.nextLine());
-		}	
-		
-		reader.close();
+			while (reader.hasNextLine()) {
+				wordList.add(reader.nextLine());
+			}
+			reader.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw e;
 		}
 	}
 	
@@ -97,48 +107,48 @@ public class HangMan {
 		return wordList.get(Randomizer.generateInt(0, wordList.size()-1));
 	}
 	
-	static public String makeHangmanString(int penaltyValue) {
+	static protected String makeHangmanString(int penaltyValue) {
 		
 		StringBuilder holder = new StringBuilder();
 		
-			holder.append("__________");
-			holder.append(" |    |");
+			holder.append("__________\n");
+			holder.append(" |    |\n");
 
 		switch (penaltyValue) {
 		case 1:
-			holder.append(" |    o");
-			holder.append(" |");
-			holder.append(" |");
+			holder.append(" |    o\n");
+			holder.append(" |\n");
+			holder.append(" |\n");
 			break;
 		case 2:
-			holder.append(" |    o");
-			holder.append(" |   /");
-			holder.append(" |");
+			holder.append(" |    o\n");
+			holder.append(" |   /\n");
+			holder.append(" |\n");
 			break;
 		case 3:
-			holder.append(" |    o");
-			holder.append(" |   /|");
-			holder.append(" |");
+			holder.append(" |    o\n");
+			holder.append(" |   /|\n");
+			holder.append(" |\n");
 			break;
 		case 4:
-			holder.append(" |    o");
-			holder.append(" |   /|\\");
-			holder.append(" |");
+			holder.append(" |    o\n");
+			holder.append(" |   /|\\\n");
+			holder.append(" |\n");
 			break;
 		case 5:
-			holder.append(" |    o");
-			holder.append(" |   /|\\");
-			holder.append(" |   /");
+			holder.append(" |    o\n");
+			holder.append(" |   /|\\\n");
+			holder.append(" |   /\n");
 			break;
 		case 6:
-			holder.append(" |    o");
-			holder.append(" |   /|\\");
-			holder.append(" |   / \\");
+			holder.append(" |    o\n");
+			holder.append(" |   /|\\\n");
+			holder.append(" |   / \\\n");
 			break;
 		default:
-			holder.append(" |");
-			holder.append(" |");
-			holder.append(" |");
+			holder.append(" |\n");
+			holder.append(" |\n");
+			holder.append(" |\n");
 			break;
 		}
 			holder.append("__________");
@@ -146,45 +156,52 @@ public class HangMan {
 			return holder.toString();
 	}
 
-	private void printKnownLetters() {
+	protected String makeKnownLettersString() {
+		StringBuilder holder = new StringBuilder();
 		for (int i = 0; i < word.length(); i++) {
 			if (letterKnown[i]) {
-				System.out.print(word.charAt(i));
+				holder.append(word.charAt(i));
 			} else {
-				System.out.print('_');
+				holder.append('_');
 			}
 			
-			//If last character, then print nothing
+			//If last character, then append nothing
 			if (i != word.length() - 1)
-				System.out.print(" ");
+				holder.append(" ");
 		}
-		System.out.println();
+		
+		return holder.toString();
 		
 	}
 	
-	private void printWrongLettersGuessed() {
-		System.err.print("Wrong Guesses: ");
+	protected String makeWrongLettersGuessedString() {
+		StringBuilder holder = new StringBuilder();
+		holder.append("Wrong Guesses: ");
 		for (int i = 0; i < wrongLettersGuessed.size(); i++) {
-			System.err.print(wrongLettersGuessed.get(i));
+			holder.append(wrongLettersGuessed.get(i));
 			
 			//If last character, then print nothing
 			if (i != wrongLettersGuessed.size() - 1)
-				System.err.print(", ");
+				holder.append(", ");
 		}
-		System.err.println();
+		
+		return holder.toString();
 		
 	}
 	
-	private void printLettersGuessed() {
-		System.out.print("Letters Guessed: ");
+	protected String makeLettersGuessedString() {
+		StringBuilder holder = new StringBuilder();
+		
+		holder.append("Letters guessed: ");
 		for (int i = 0; i < lettersGuessed.size(); i++) {
-			System.out.print(lettersGuessed.get(i));
+			holder.append(lettersGuessed.get(i));
 			
 			//If last character, then print nothing
 			if (i != lettersGuessed.size() - 1)
-				System.out.print(", ");
+				holder.append(", ");
 		}
-		System.out.println();
+		
+		return holder.toString();
 	}
 
 	
@@ -198,23 +215,35 @@ public class HangMan {
 	 */
 	private boolean getInputAndCheckLetterExist(Scanner scanObj) {
 		char userInput;
-		boolean alreadyGuessed;
+		boolean repeatLoopFlag; //Becomes true if input is invalid: not letter, already entered, nothing entered
 		
 		//Get input and validate input
 		do {
-			//Initialize/reset value of alreadyGussed to false
-			alreadyGuessed = false;
-			System.out.print("Input: ");
-			userInput = scanObj.nextLine().toUpperCase().charAt(0);
-			
-			//Check for previously entered letter
-			for (int i = 0; i < lettersGuessed.size(); i++) {
-				if (userInput == lettersGuessed.get(i)) {
-					System.out.println("You already guessed this letter! Try again.");
-					alreadyGuessed = true;
+			// Initialize/reset value of repeatLoopFlag to false
+			repeatLoopFlag = false;
+			System.out.print("Guess #" + (guesses + 1) + ": ");
+			try {
+				userInput = scanObj.nextLine().toUpperCase().charAt(0);
+			} catch (Exception e) {
+				// Makes userInput equal to space so that it will return "This is not a letter"
+				// error.
+				userInput = ' ';
+			}
+
+			// Check if userInput is character
+			if (!Character.isLetter(userInput)) {
+				System.out.println("This is not a letter! Try again.");
+				repeatLoopFlag = true;
+			} else {
+				// Check for previously entered letter
+				for (int i = 0; i < lettersGuessed.size(); i++) {
+					if (userInput == lettersGuessed.get(i)) {
+						System.out.println("You already guessed this letter! Try again.");
+						repeatLoopFlag = true;
+					}
 				}
-			} 
-		} while (alreadyGuessed);
+			}
+		} while (repeatLoopFlag);
 		
 		//Update lettersGuessed list
 		lettersGuessed.add(userInput);
@@ -248,7 +277,7 @@ public class HangMan {
 	/**
 	 * Increments penalty and updates gussesLeft
 	 */
-	public void incrPenalty() {
+	private void incrPenalty() {
 		penalty++;
 		guessesLeft--;
 	}
@@ -257,20 +286,13 @@ public class HangMan {
 		guesses++;
 	}
 	
-	private void gameEnd() {
-
-		// Throw exception if penalty = 6
-		// TODO put this into the exception class instead
-		if (penalty == 6) {
-			makeHangmanString(penalty);
-			System.err.println("GAME OVER! The word was " + word);
-			printWrongLettersGuessed();
-			System.err.println("Guesses: " + guesses);
-			System.err.println();
+	private void gameEnd() throws HangManException {
+		if (penalty == GAME_OVER_VALUE) {
+			throw new HangManException(this);
 		} else {
 			System.out.print("The word was ");
-			printKnownLetters();
-			System.out.println("Guesses: " + guesses);
+			System.out.println(makeKnownLettersString());
+			System.out.println("Total Guesses: " + guesses);
 			System.out.println("Guesses left: " + guessesLeft);
 			System.out.println("You won! Congratulations!");
 		}
@@ -278,6 +300,6 @@ public class HangMan {
 
 	public static void main(String args[]) {
 		HangMan game = new HangMan(args[0]);
-
+		game.playGame();
 	}
 }
